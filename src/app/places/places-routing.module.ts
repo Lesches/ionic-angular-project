@@ -20,7 +20,8 @@ const routes: Routes = [
         ]
     },
 
-    {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'}
+    {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'},  { path: 'places', loadChildren: './places/places.module#PlacesPageModule' }
+
 ];
 
 @NgModule({
