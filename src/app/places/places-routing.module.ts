@@ -9,7 +9,7 @@ const routes: Routes = [
                     {path: ':placeId', loadChildren: './discover/place-detail/place-detail.module#PlaceDetailPageModule'}
 
                 ]},
-            {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'},
+
             {path: 'offers', children: [{
                     path: '', loadChildren: './offers/offers.module#OffersPageModule'},
                     {path: 'new', loadChildren: './offers/new-offer/new-offer.module#NewOfferPageModule'},
@@ -19,7 +19,7 @@ const routes: Routes = [
                 ]},
         ]
     },
-
+    {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'},
     {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'},
  // { path: 'places', loadChildren: './places/places.module#PlacesPageModule' }
 
