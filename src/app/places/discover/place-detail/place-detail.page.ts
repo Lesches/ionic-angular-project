@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {ModalController, NavController} from '@ionic/angular';
+import {CreateBookingComponent} from '../../../bookings/create-booking/create-booking.component';
 
 @Component({
   selector: 'app-place-detail',
@@ -14,7 +15,10 @@ export class PlaceDetailPage implements OnInit {
   ngOnInit() {
   }
   onBookPlace() {
-    this.modalCtrl.create()
-  }
+    this.modalCtrl.create({component: CreateBookingComponent});
+    }
+
+
+
 
 }
