@@ -38,7 +38,33 @@
          <ion-select-option value="3">3</ion-select-option>
        </ion-item>
      </ion-col>
-   <ion-grid></ion-grid>
+     </ion-row>
+
+   <ion-row>
+     <ion-col offset-sm=3 size-sm="6">
+       <ion-item>
+         <ion-label position="floating">From</ion-label>
+         <ion-datetime [ngModel] name="dateFrom" display-format="MMM DD YYYY" picker-format="YY MMM DD" [min]="" [max]="" required #startDateCtrl="ngModel"></ion-datetime>
+
+       </ion-item>
+     </ion-col>
+   </ion-row>
+
+   <ion-row>
+     <ion-col offset-sm=3 size-sm="6">
+       <ion-item>
+         <ion-label position="floating">To</ion-label>
+         <ion-datetime [ngModel] name="dateTo" display-format="MMM DD YYYY" picker-format="YY MMM DD" [min]="startDateCtrl.value" [max]="" required></ion-datetime>
+
+       </ion-item>
+     </ion-col>
+   </ion-row>
+   <ion-row>
+     <ion-col offset-sm=3 size-sm="6">
+       <ion-button color="primary" type="submit" expand="block">Book</ion-button>
+     </ion-col>
+   </ion-row>
+  </ion-grid>
   </form>
-    <ion-button color="primary" (click)="onBookPlace()">Book</ion-button>
+
 </ion-content>
