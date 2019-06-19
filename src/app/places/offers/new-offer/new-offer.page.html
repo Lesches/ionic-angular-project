@@ -4,6 +4,11 @@
       <ion-back-button defaultHref="/places/tabs/offers"></ion-back-button>
     </ion-buttons>
     <ion-title>New Offer</ion-title>
+      <ion-buttons slot="primary">
+          <ion-button (click)="onCreateOffer()">
+              <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+          </ion-button>
+      </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -28,6 +33,18 @@
           <ion-col size-sm="6" offset-sm="3">
               <ion-label position="floating">Price</ion-label>
               <ion-input type="number" autocomplete></ion-input>
+          </ion-col>
+      </ion-row>
+
+      <ion-row align-items-stretch justify-content-start>
+          <ion-col size-sm="3" offset-sm="3">
+              <ion-label position="floating">Available from</ion-label>
+              <ion-datetime min="2019-01-01" max="2025-12-30"></ion-datetime>
+          </ion-col>
+
+          <ion-col size-sm="3">
+              <ion-label position="floating">Available till</ion-label>
+              <ion-datetime min="2019-01-02" max="2025-12-31"></ion-datetime>
           </ion-col>
       </ion-row>
   </ion-grid>
