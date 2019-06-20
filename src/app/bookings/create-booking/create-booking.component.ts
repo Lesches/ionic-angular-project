@@ -10,11 +10,27 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 })
 export class CreateBookingComponent implements OnInit {
   @Input() selectedPlace: Place;
-  form: FormGroup;
+  @Input() selectedMode: 'select' | 'random';
+  startDate: string;
+  endDate: string;
+
+
   constructor(private modalCtrl: ModalController) { }
 
   ngOnInit() {
-    this.form = new FormGroup({
+    const availableFrom = new Date(this.selectedPlace.availableFrom);
+    const availableTo = new Date(this.selectedPlace.availableTo);
+
+    if (this.selectedMode === 'random') {
+      // tslint:disable-next-line:max-line-length
+      this.startDate = new Date(availableFrom.getTime() + Math.random() * (availableTo.getTime()
+          - 7 * 24 * 60 * 60 * 1000 - availableFrom.getTime())).toISOString();
+
+      // tslint:disable-next-line:max-line-length
+      this.endDate = new Date(new Date(this.startDate).getTime() + Math.random() * (new Date(this.startDate).getTime()
+          + 6 * 24 * 60 * 60 * 1000 - new Date(this.startDate).getTime())).toISOString();
+    }
+   /* this.form = new FormGroup({
       fname: new FormControl(null, {
         updateOn: 'blur', validators: [Validators.required]
       }),
@@ -30,7 +46,7 @@ export class CreateBookingComponent implements OnInit {
       dateTo: new FormControl(null, {
         updateOn: 'blur', validators: [Validators.required]
       })
-    });
+    });*/
   }
     onCancel(){
       this.modalCtrl.dismiss(null, 'cancel');

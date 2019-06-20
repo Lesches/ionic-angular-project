@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content text-center padding>
-  <form [formGroup]="form">
+  <form (ngSubmit)="onBookPlace()">
  <ion-grid>
    <ion-row>
      <ion-col offset-sm="3" size-sm="3">
@@ -44,7 +44,7 @@
      <ion-col offset-sm=3 size-sm="6">
        <ion-item>
          <ion-label position="floating">From</ion-label>
-         <ion-datetime [ngModel] name="dateFrom" display-format="MMM DD YYYY" picker-format="YY MMM DD" [min]="selectedPlace.availableFrom.toISOString()" [max]="selectedPlace.availableTo.toISOString()" required #startDateCtrl="ngModel"></ion-datetime>
+         <ion-datetime display-format="MMM DD YYYY" picker-format="YY MMM DD" [min]="selectedPlace.availableFrom.toISOString()" [max]="selectedPlace.availableTo.toISOString()" [ngModel]="startDate" name="dateFrom" required #startDateCtrl="ngModel"></ion-datetime>
 
        </ion-item>
      </ion-col>
@@ -54,7 +54,7 @@
      <ion-col offset-sm=3 size-sm="6">
        <ion-item>
          <ion-label position="floating">To</ion-label>
-         <ion-datetime [ngModel] name="dateTo" display-format="MMM DD YYYY" picker-format="YY MMM DD" [min]="startDateCtrl.value" [max]="selectedPlace.availableTo.toISOString()" required></ion-datetime>
+         <ion-datetime  display-format="MMM DD YYYY" picker-format="YY MMM DD" [min]="startDateCtrl.value" [max]="selectedPlace.availableTo.toISOString()" [ngModel]="endDate" name="dateTo" required></ion-datetime>
 
        </ion-item>
      </ion-col>
