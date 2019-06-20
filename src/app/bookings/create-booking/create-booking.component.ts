@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Place} from '../../places/place.model';
 import {ModalController} from '@ionic/angular';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-create-booking',
@@ -11,6 +11,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 export class CreateBookingComponent implements OnInit {
   @Input() selectedPlace: Place;
   @Input() selectedMode: 'select' | 'random';
+  @ViewChild('f') form: NgForm;
   startDate: string;
   endDate: string;
 
@@ -30,30 +31,28 @@ export class CreateBookingComponent implements OnInit {
       this.endDate = new Date(new Date(this.startDate).getTime() + Math.random() * (new Date(this.startDate).getTime()
           + 6 * 24 * 60 * 60 * 1000 - new Date(this.startDate).getTime())).toISOString();
     }
-   /* this.form = new FormGroup({
-      fname: new FormControl(null, {
-        updateOn: 'blur', validators: [Validators.required]
-      }),
-      lname: new FormControl(null, {
-        updateOn: 'blur', validators: [Validators.required, Validators.maxLength(180)]
-      }),
-      count: new FormControl(null, {
-        updateOn: 'blur', validators: [Validators.required, Validators.min(1), ]
-      }),
-      dateFrom: new FormControl(null, {
-        updateOn: 'blur', validators: [Validators.required]
-      }),
-      dateTo: new FormControl(null, {
-        updateOn: 'blur', validators: [Validators.required]
-      })
-    });*/
   }
     onCancel(){
       this.modalCtrl.dismiss(null, 'cancel');
     }
 
     onBookPlace() {
-    this.modalCtrl.dismiss({message: 'dummy message'}, 'confirm');
+      if (!this.form.valid || !this.datesValid) {
+        return;
+      }
+    this.modalCtrl.dismiss({bookingData: {
+    fname: this.form.value.fname,
+      lname: this.form.value.lname,
+      count: this.form.value.count,
+      startDate: this.form.value.dateFrom,
+      endDate: this.form.value.dateTo}
+    }, 'confirm');
 
+    }
+
+ datesValid() {
+      const startDate = new Date(this.form.value.dateFrom);
+      const endDate = new Date(this.form.value.dateTo);
+      return endDate > startDate;
     }
 }

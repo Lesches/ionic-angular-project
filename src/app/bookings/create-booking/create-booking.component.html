@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content text-center padding>
-  <form (ngSubmit)="onBookPlace()">
+  <form (ngSubmit)="onBookPlace()" #f="ngForm">
  <ion-grid>
    <ion-row>
      <ion-col offset-sm="3" size-sm="3">
@@ -61,7 +61,7 @@
    </ion-row>
    <ion-row>
      <ion-col offset-sm=3 size-sm="6">
-       <ion-button color="primary" type="submit" expand="block">Book</ion-button>
+       <ion-button color="primary" type="submit" expand="block" disabled="!f.valid || !datesValid()">Book</ion-button>
      </ion-col>
    </ion-row>
   </ion-grid>
