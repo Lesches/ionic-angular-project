@@ -32,7 +32,7 @@ export class CreateBookingComponent implements OnInit {
           + 6 * 24 * 60 * 60 * 1000 - new Date(this.startDate).getTime())).toISOString();
     }
   }
-    onCancel(){
+    onCancel() {
       this.modalCtrl.dismiss(null, 'cancel');
     }
 
@@ -40,7 +40,7 @@ export class CreateBookingComponent implements OnInit {
       if (!this.form.valid || !this.datesValid) {
         return;
       }
-    this.modalCtrl.dismiss({bookingData: {
+      this.modalCtrl.dismiss({bookingData: {
     fname: this.form.value.fname,
       lname: this.form.value.lname,
       count: this.form.value.count,
