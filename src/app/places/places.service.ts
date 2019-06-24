@@ -30,7 +30,7 @@ export class PlacesService {
       const newPlace = new Place(Math.random().toString(), title, description,
           'https://imgs.6sqft.com/wp-content/uploads/2014/06/21042534/Felix_Warburg_Mansion_007.jpg',
           price, availableFrom, availabeTo, this.authService.UserId);
-      this.places.push(newPlace);
+      this.place.push(newPlace);
     }
 
 }
