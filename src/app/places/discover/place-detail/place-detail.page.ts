@@ -1,10 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ActionSheetController, ModalController, NavController} from '@ionic/angular';
+import {ActionSheetController, LoadingController, ModalController, NavController} from '@ionic/angular';
 import {CreateBookingComponent} from '../../../bookings/create-booking/create-booking.component';
 import {PlacesService} from '../../places.service';
 import {Place} from '../../place.model';
 import {Subscription} from 'rxjs';
+import {BookingService} from '../../../bookings/booking.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -12,11 +13,12 @@ import {Subscription} from 'rxjs';
   styleUrls: ['./place-detail.page.scss'],
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
-place: Place;
-private placesSub: Subscription;
+  place: Place;
+  private placesSub: Subscription;
   // tslint:disable-next-line:max-line-length
   constructor(private router: Router, private navCtrl: NavController, private modalCtrl: ModalController,
-              private placesService: PlacesService, private route: ActivatedRoute, private actionSheetCtrl: ActionSheetController) {
+              private placesService: PlacesService, private route: ActivatedRoute, private actionSheetCtrl: ActionSheetController,
+              private bookingService: BookingService, private loadingCtrl: LoadingController) {
 
 }
 
@@ -65,7 +67,16 @@ private placesSub: Subscription;
         console.log(resultData.data, resultData.role);
 
         if (resultData.role === 'confirm') {
-          console.log('booked!');
+          this.loadingCtrl.create({message: 'Booking place...'}).then(loadingEl => {
+            loadingEl.present();
+            const data = resultData.data.bookingData;
+            this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, data.fname, data.lname,
+                data.guestNumber, data.startDate, data.endDate).subscribe(() => {
+                  loadingEl.dismiss();
+            });
+              }
+
+          );
         }
       });
     }
