@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {PlacesService} from '../../places.service';
-import {NavController} from '@ionic/angular';
+import {LoadingController, NavController} from '@ionic/angular';
 import {Place} from '../../place.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
@@ -15,7 +15,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
   place: Place;
   form: FormGroup;
   private placeSub: Subscription;
-  constructor(private route: ActivatedRoute, private placesService: PlacesService, private navCtrl: NavController) { }
+  constructor(private route: ActivatedRoute, private placesService: PlacesService,
+              private navCtrl: NavController, private router: Router, private loadingCtrl: LoadingController) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
@@ -23,7 +24,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
-    this.placeSub =  this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
+      this.placeSub =  this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
        this.place = place;
        this.form = new FormGroup({
           title: new FormControl(this.place.title, {
@@ -45,7 +46,17 @@ export class EditOfferPage implements OnInit, OnDestroy {
     if (!this.form.valid) {
       return;
     }
-    console.log(this.form);
+
+    this.loadingCtrl.create({
+        message: 'uploading place...'
+    }).then(loadingEl => {
+        loadingEl.present();
+        this.placesService.updateOffer(this.place.id, this.form.value.title, this.form.value.description).subscribe(() => {
+            loadingEl.dismiss();
+            this.form.reset();
+            this.router.navigate(['/places/tabs/offers']);
+        });
+    });
   }
 
   ngOnDestroy(): void {
