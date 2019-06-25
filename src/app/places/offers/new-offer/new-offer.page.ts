@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
 import {PlacesService} from '../../places.service';
 import {Router} from '@angular/router';
+import {LoadingController} from '@ionic/angular';
 
 @Component({
   selector: 'app-new-offer',
@@ -10,7 +11,7 @@ import {Router} from '@angular/router';
 })
 export class NewOfferPage implements OnInit {
 
-  constructor(private placesService: PlacesService, private router: Router) { }
+  constructor(private placesService: PlacesService, private router: Router, private loadeingCtrl: LoadingController) { }
     form: FormGroup;
   ngOnInit() {
     this.form = new FormGroup({

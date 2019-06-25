@@ -36,7 +36,10 @@ export class PlacesService {
           'https://imgs.6sqft.com/wp-content/uploads/2014/06/21042534/Felix_Warburg_Mansion_007.jpg',
           price, availableFrom, availabeTo, this.authService.UserId);
       this.places.pipe(take(1)).subscribe(place => {
-        this.place.next(place.concat(newPlace));
+          setTimeout(() => {
+              this.place.next(place.concat(newPlace));
+          }, 1000);
+
           }
       );
 
