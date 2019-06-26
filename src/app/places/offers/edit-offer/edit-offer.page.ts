@@ -14,6 +14,8 @@ import {Subscription} from 'rxjs';
 export class EditOfferPage implements OnInit, OnDestroy {
   place: Place;
   form: FormGroup;
+  isLoading = false;
+  placeId: string;
   private placeSub: Subscription;
   constructor(private route: ActivatedRoute, private placesService: PlacesService,
               private navCtrl: NavController, private router: Router, private loadingCtrl: LoadingController) { }
@@ -24,6 +26,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
+      this.placeId = maramMap.get('placeId');
+      this.isLoading = true;
       this.placeSub =  this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
        this.place = place;
        this.form = new FormGroup({
@@ -35,6 +39,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
 
           })
         });
+       this.isLoading = false;
      });
 
 

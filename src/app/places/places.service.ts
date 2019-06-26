@@ -42,8 +42,8 @@ export class PlacesService {
         }));
   }
     getPlace(id: string) {
-   return this.places.pipe(take(1), map(places => {
-     return {...places.find(p => p.id === id)};
+   return this.http.get<PlaceData>(`https://maga-da45c.firebaseio.com/offered-places${id}.json`).pipe(map(resData => {
+return new Place(id, resData.title, resData.description, resData.imageUrl, resData.price, new Date(resData.availableFrom), new Date(resData.availableTo), resData.userId);
    }));
 
     }
@@ -76,7 +76,7 @@ export class PlacesService {
               updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description,
                   old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId);
 
-              return this.http.put(`https://maga-da45c.firebaseio.com/offered-places${placeId}.json/`,
+              return this.http.put(`https://maga-da45c.firebaseio.com/offered-places${placeId}.json`,
               {...updatedPlaces[updatedPlaceIndex], id: null}
           );
       }), tap(() => {
