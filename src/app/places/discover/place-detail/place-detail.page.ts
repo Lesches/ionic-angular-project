@@ -6,6 +6,7 @@ import {PlacesService} from '../../places.service';
 import {Place} from '../../place.model';
 import {Subscription} from 'rxjs';
 import {BookingService} from '../../../bookings/booking.service';
+import {AuthService} from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -14,11 +15,12 @@ import {BookingService} from '../../../bookings/booking.service';
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
   place: Place;
+  isBookable = false;
   private placesSub: Subscription;
   // tslint:disable-next-line:max-line-length
   constructor(private router: Router, private navCtrl: NavController, private modalCtrl: ModalController,
               private placesService: PlacesService, private route: ActivatedRoute, private actionSheetCtrl: ActionSheetController,
-              private bookingService: BookingService, private loadingCtrl: LoadingController) {
+              private bookingService: BookingService, private loadingCtrl: LoadingController, private authservice: AuthService) {
 
 }
 
@@ -30,6 +32,7 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       }
       this.placesSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
         this.place = place;
+        this.isBookable = place.userId !== this.authservice.UserId;
           }
       );
     });

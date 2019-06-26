@@ -15,7 +15,7 @@
     <ion-row>
       <ion-col sizeSm="6" offsetSm="3"><p>{{place.description}}</p></ion-col>
 
-        <ion-col>
+        <ion-col  *ngIf="isBookable">
         <ion-button color="primary" margin (click)="onBookPlace()">Book</ion-button>
         </ion-col>
 
