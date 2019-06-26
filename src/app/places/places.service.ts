@@ -3,6 +3,7 @@ import {Place} from './place.model';
 import {AuthService} from '../auth/auth.service';
 import {BehaviorSubject} from 'rxjs';
 import {take, map, tap, delay} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class PlacesService {
   get places() {
     return this.place.asObservable();
   }
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private http: HttpClient) { }
     getPlace(id: string) {
    return this.places.pipe(take(1), map(places => {
      return {...places.find(p => p.id === id)};
@@ -35,9 +36,12 @@ export class PlacesService {
       const newPlace = new Place(Math.random().toString(), title, description,
           'https://imgs.6sqft.com/wp-content/uploads/2014/06/21042534/Felix_Warburg_Mansion_007.jpg',
           price, availableFrom, availabeTo, this.authService.UserId);
-      return this.places.pipe(take(1), delay(1000), tap(places => {
-          this.place.next(places.concat(newPlace));
-      }));
+      return this.http.post('https://maga-da45c.firebaseio.com/offered-places.json', {...newPlace, id: null}).pipe(tap(resData => {
+    console.log(resData);
+        }));
+   //   return this.places.pipe(take(1), delay(1000), tap(places => {
+     //     this.place.next(places.concat(newPlace));
+ //     }));
 
     }
     updateOffer(placeId: string, title: string, description: string) {
