@@ -67,14 +67,21 @@ export class PlacesService {
 
     }
     updateOffer(placeId: string, title: string, description: string) {
-     return this.places.pipe(take(1), delay(1000), tap(places => {
-         const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
-         const updatedPlaces = [...places];
-         const old = updatedPlaces[updatedPlaceIndex];
-         updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description,
-             old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId);
+      let updatedPlaces: Place[];
 
-         this.place.next(updatedPlaces);
-     }));
+      return  this.places.pipe(take(1), switchMap(places => {
+              const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
+              updatedPlaces = [...places];
+              const old = updatedPlaces[updatedPlaceIndex];
+              updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description,
+                  old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId);
+
+              return this.http.put(`https://maga-da45c.firebaseio.com/offered-places${placeId}.json/`,
+              {...updatedPlaces[updatedPlaceIndex], id: null}
+          );
+      }), tap(() => {
+this.place.next(updatedPlaces);
+})
+);
     }
 }
