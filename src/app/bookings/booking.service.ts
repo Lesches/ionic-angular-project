@@ -13,6 +13,7 @@ export class BookingService {
   constructor(private authService: AuthService) {
 
   }
+
   get Bookings() {
     return this.bookings.asObservable();
   }
@@ -27,6 +28,9 @@ export class BookingService {
   }
 
   cancelBooking(bookingId: string) {
-
+    return this.bookings.pipe(take(1), delay(1000), tap(bookings => {
+          this.bookings.next(bookings.filter(b => b.id !== bookingId));
+        }
+    ));
   }
 }
