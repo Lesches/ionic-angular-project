@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Place} from './place.model';
 import {AuthService} from '../auth/auth.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {take, map, tap, delay, switchMap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 
@@ -43,7 +43,8 @@ export class PlacesService {
   }
     getPlace(id: string) {
    return this.http.get<PlaceData>(`https://maga-da45c.firebaseio.com/offered-places${id}.json`).pipe(map(resData => {
-return new Place(id, resData.title, resData.description, resData.imageUrl, resData.price, new Date(resData.availableFrom), new Date(resData.availableTo), resData.userId);
+return new Place(id, resData.title, resData.description, resData.imageUrl, resData.price,
+    new Date(resData.availableFrom), new Date(resData.availableTo), resData.userId);
    }));
 
     }
@@ -70,6 +71,15 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
       let updatedPlaces: Place[];
 
       return  this.places.pipe(take(1), switchMap(places => {
+          if (!places || places.length <= 0) {
+              return this.fetchPlaces();
+          } else {
+              return of (places);
+          }
+
+      }),
+
+      switchMap(places => {
               const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
               updatedPlaces = [...places];
               const old = updatedPlaces[updatedPlaceIndex];
@@ -77,9 +87,9 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
                   old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId);
 
               return this.http.put(`https://maga-da45c.firebaseio.com/offered-places${placeId}.json`,
-              {...updatedPlaces[updatedPlaceIndex], id: null}
-          );
-      }), tap(() => {
+                  {...updatedPlaces[updatedPlaceIndex], id: null}
+              );
+          }), tap(() => {
 this.place.next(updatedPlaces);
 })
 );

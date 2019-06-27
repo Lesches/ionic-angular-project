@@ -26,7 +26,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
-      this.placeId = maramMap.get('placeId');
+      this.placeId = paramMap.get('placeId');
       this.isLoading = true;
       this.placeSub =  this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
        this.place = place;
