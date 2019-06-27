@@ -13,15 +13,13 @@ const routes: Routes = [
             {path: 'offers', children: [{
                     path: '', loadChildren: './offers/offers.module#OffersPageModule'},
                     {path: 'new', loadChildren: './offers/new-offer/new-offer.module#NewOfferPageModule'},
-                    {path: 'edit/:placeId', loadChildren: './offers/edit-offer/edit-offer.module#EditOfferPageModule'},
-                    {path: ':placeId', loadChildren: './offers/offer-bookings/offer-bookings.module#OfferBookingsPageModule'},
+                    {path: 'edit/:placeId', loadChildren: './offers/edit-offer/edit-offer.module#EditOfferPageModule'}
 
                 ]},
         ]
     },
     {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'},
-    {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'},
- // { path: 'places', loadChildren: './places/places.module#PlacesPageModule' }
+    {path: '', redirectTo: '/places/tabs/discover', pathMatch: 'full'}
 
 ];
 
