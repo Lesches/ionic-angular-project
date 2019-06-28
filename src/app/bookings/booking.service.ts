@@ -2,8 +2,20 @@ import { Injectable } from '@angular/core';
 import {Booking} from './booking.model';
 import {BehaviorSubject} from 'rxjs';
 import {AuthService} from '../auth/auth.service';
-import {delay, switchMap, take, tap} from 'rxjs/operators';
+import {delay, map, switchMap, take, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
+
+interface BookingData {
+  bookedFrom: string;
+  bookedTo: string;
+  fname: string;
+  guestNumber: number;
+  lname: string;
+  placeId: string;
+  placeImage: string;
+  placeTitle: string;
+  userId: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -43,15 +55,18 @@ constructor(private authService: AuthService, private http: HttpClient) {
     ));
   }
 fetchBookings() {
-  this.http.get(`https://maga-da45c.firebaseio.com/bookings.json?ordereBy="UserId"&equalTo="${this.authService.UserId}"`)
-      .pipe(bookingData => {
-    const bookingData = [];
+  this.http.get<{[key: string]: BookingData}>(
+      `https://maga-da45c.firebaseio.com/bookings.json?ordereBy="UserId"&equalTo="${this.authService.UserId}"`)
+      .pipe(map(bookingData => {
+    const bookings = [];
     for (const key in bookingData) {
       if (bookingData.hasOwnProperty(key)) {
-        bookings.push(new Booking(key), bookingData[key].placeId);
+        bookings.push(new Booking(key, bookingData[key].placeId, bookingData[key].userId, bookingData[key].placeTitle,
+            bookingData[key].placeImage, bookingData[key].fname, bookingData[key].lname, bookingData[key].guestNumber,
+            new Date(bookingData[key].bookedFrom), new Date(bookingData[key].bookedTo)));
       }
     }
-  });
+  }));
 }
 
 }
