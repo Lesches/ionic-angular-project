@@ -42,4 +42,16 @@ constructor(private authService: AuthService, private http: HttpClient) {
         }
     ));
   }
+fetchBookings() {
+  this.http.get(`https://maga-da45c.firebaseio.com/bookings.json?ordereBy="UserId"&equalTo="${this.authService.UserId}"`)
+      .pipe(bookingData => {
+    const bookingData = [];
+    for (const key in bookingData) {
+      if (bookingData.hasOwnProperty(key)) {
+        bookings.push(new Booking(key), bookingData[key].placeId);
+      }
+    }
+  });
+}
+
 }
