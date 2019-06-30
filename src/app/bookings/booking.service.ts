@@ -55,7 +55,7 @@ constructor(private authService: AuthService, private http: HttpClient) {
     ));
   }
 fetchBookings() {
-  this.http.get<{[key: string]: BookingData}>(
+  return this.http.get<{[key: string]: BookingData}>(
       `https://maga-da45c.firebaseio.com/bookings.json?ordereBy="UserId"&equalTo="${this.authService.UserId}"`)
       .pipe(map(bookingData => {
     const bookings = [];
@@ -66,7 +66,10 @@ fetchBookings() {
             new Date(bookingData[key].bookedFrom), new Date(bookingData[key].bookedTo)));
       }
     }
-  }));
+    return bookings;
+  }), tap(bookings => {
+        this.Bookings.next(bookings);
+      }));
 }
 
 }
