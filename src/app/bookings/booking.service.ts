@@ -68,7 +68,7 @@ fetchBookings() {
     }
     return bookings;
   }), tap(bookings => {
-        this.Bookings.next(bookings);
+        this.bookings.next(bookings);
       }));
 }
 
