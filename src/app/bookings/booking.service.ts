@@ -49,10 +49,11 @@ constructor(private authService: AuthService, private http: HttpClient) {
   }
 
   cancelBooking(bookingId: string) {
-    return this.bookings.pipe(take(1), delay(1000), tap(bookings => {
-          this.bookings.next(bookings.filter(b => b.id !== bookingId));
-        }
-    ));
+  return this.http.delete(`https://maga-da45c.firebaseio.com/bookings/${bookingId}.json`).pipe(switchMap(() => {
+return this.bookings;
+    }), take(1), tap(bookings => {
+    this.bookings.next(bookings.filter(b => b.id !== bookingId));
+  }));
   }
 fetchBookings() {
   return this.http.get<{[key: string]: BookingData}>(
@@ -68,8 +69,7 @@ fetchBookings() {
     }
     return bookings;
   }), tap(bookings => {
-        this.Bookings.next(bookings);
+        this.bookings.next(bookings);
       }));
 }
-
 }
