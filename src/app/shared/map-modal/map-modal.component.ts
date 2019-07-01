@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, Renderer2} from '@angular/core';
 import {ModalController} from '@ionic/angular';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-map-modal',
@@ -46,7 +47,7 @@ map.addListener('click', event => {
 
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDWS4EdUpVhz7t8_ecSqvSRS0nKPclKCoE';
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=' + environment.YOUR_API_KEY;
       script.async = true;
       script.defer = true;
       document.body.appendChild(script);

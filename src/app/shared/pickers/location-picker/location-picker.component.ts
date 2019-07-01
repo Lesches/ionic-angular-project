@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {MapModalComponent} from '../../map-modal/map-modal.component';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../../environments/environment';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-location-picker',
@@ -9,15 +12,30 @@ import {MapModalComponent} from '../../map-modal/map-modal.component';
 })
 export class LocationPickerComponent implements OnInit {
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(private modalCtrl: ModalController, private http: HttpClient) { }
 
   ngOnInit() {}
 onClickLocation() {
   this.modalCtrl.create({component: MapModalComponent}).then(modalEl => {
     modalEl.onDidDismiss().then(modalData => {
-console.log(modalData.data);
+      if (!modalData.data) {
+        return;
+      }
+      this.getAddress(modalData.data.lat, modalData.data.lng).subscribe((address) => {
+        console.log(address);
+      });
     });
     modalEl.present();
   });
+}
+
+private getAddress(lat: number, lng: number) {
+  return this.http.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat}, ${lng}&key=${environment.YOUR_API_KEY}`)
+      .pipe(map((geoData:any) => {
+   if (!geoData || !geoData.results || geoData.results.length === 0) {
+     return null;
+   }
+   return geoData.results[0].formatted_address;
+  }));
 }
 }
