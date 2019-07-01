@@ -10,7 +10,13 @@ export class MapModalComponent implements OnInit, AfterViewInit {
 
   constructor(private modalCtrl: ModalController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getGoogleMaps().then(googleMaps => {
+
+    }).catch( err => {
+      console.log(err);
+    });
+  }
 
   ngAfterViewInit(): void {
   }
@@ -19,11 +25,28 @@ export class MapModalComponent implements OnInit, AfterViewInit {
     this.modalCtrl.dismiss();
   }
 
-  private getGoogleMaps() {
-    const win= window as any;
+  private getGoogleMaps(): Promise<any> {
+    const win = window as any;
     const googleModule = win.google();
     if (googleModule && googleModule.maps) {
       return Promise.resolve(googleModule.maps);
     }
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDWS4EdUpVhz7t8_ecSqvSRS0nKPclKCoE';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+      script.onload = () => {
+      const loadedGoogleModule = win.google;
+      if (loadedGoogleModule && loadedGoogleModule.maps) {
+          resolve (loadedGoogleModule.maps);
+        } else {
+          reject ('Google maps SDK not available');
+      }
+
+      }
+    })
   }
 }
