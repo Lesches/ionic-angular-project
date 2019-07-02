@@ -19,7 +19,7 @@ googleMaps: any;
     this.getGoogleMaps().then(googleMaps => {
       this.googleMaps = googleMaps;
       const mapEl = this.mapElementRef.nativeElement;
-      const map = new googleMaps.map(mapEl, {
+      const map = new googleMaps.Map(mapEl, {
   center: {lat: -34.397, lng: 150.644},
   zoom: 16
 });
