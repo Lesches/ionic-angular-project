@@ -45,10 +45,10 @@ this.form.patchValue({location});
   }
 
   onCreateOffer() {
-    if (!this.form.valid) {
+    if (!this.form.valid || !this.form.get('image').value) {
       return;
     }
-
+    console.log(this.form.value);
     this.loadeingCtrl.create({
       message: 'Creating place...'
     }).then(loadingEl => {
