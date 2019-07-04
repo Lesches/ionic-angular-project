@@ -4,7 +4,7 @@ import {MapModalComponent} from '../../map-modal/map-modal.component';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../../environments/environment';
 import {map, switchMap} from 'rxjs/operators';
-import {PlaceLocation} from '../../../places/loacation.model';
+import {PlaceLocation} from '../../../places/location.model';
 import {of} from 'rxjs';
 import {Plugins, Capacitor} from '@capacitor/core';
 
@@ -37,14 +37,19 @@ this.showErrorAlert();
 return;
 }
 
+this.isLoading = true;
 Plugins.Geolocation.getCurrentPosition().then(geoPosition => {
     const coordinates: Coordinates = {lat: geoPosition.coords.latitude, lng: geoPosition.coords.longitude};
-}).catch(err => {this.showErrorAlert();
+    this.createPlace(coordinates.lat, coordinates.lng);
+    this.isLoading = false;
+}).catch(err => {
+    this.isLoading = false;
+    this.showErrorAlert();
 });
 }
 
 private showErrorAlert() {
-    this.alertCtrl.create({header: 'Could not fetch location', message: 'Please pick a location from the map.'})
+    this.alertCtrl.create({header: 'Could not fetch location', message: 'Please pick a location from the map.', buttons: ['Okay']})
         .then(alertEl => alertEl.present());
 }
 
@@ -55,13 +60,9 @@ private openMap() {
                 return;
             }
 
-            const pickedLocation: PlaceLocation = {
-                lat: modalData.data.lat,
-                lng: modalData.data.lng,
-                address: null,
-                staticMapImageUrl: null
+            const coordinates: Coordinates = {
+              lat: modalData.data.lat, lng: modalData.data.lng
             };
-
         });
         modalEl.present();
     });

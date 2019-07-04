@@ -4,7 +4,7 @@ import {AuthService} from '../auth/auth.service';
 import {BehaviorSubject, of} from 'rxjs';
 import {take, map, tap, delay, switchMap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
-import {PlaceLocation} from './loacation.model';
+import {PlaceLocation} from './location.model';
 
 interface PlaceData {
     imageUrl: any;

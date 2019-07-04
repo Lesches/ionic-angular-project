@@ -3,7 +3,7 @@ import {FormGroup, FormControl, Validators} from '@angular/forms';
 import {PlacesService} from '../../places.service';
 import {Router} from '@angular/router';
 import {LoadingController} from '@ionic/angular';
-import {PlaceLocation} from '../../loacation.model';
+import {PlaceLocation} from '../../location.model';
 
 @Component({
   selector: 'app-new-offer',
