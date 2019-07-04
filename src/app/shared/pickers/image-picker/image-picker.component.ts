@@ -37,16 +37,27 @@ Plugins.Camera.getPhoto({
   width: 200,
   resultType: CameraResultType.Base64
 }).then(image => {
-
-}).catch(error => {
   this.selectedImage = image.base64Data;
   this.imagePick.emit(image.base64Data);
+}).catch(error => {
+
   console.log(error);
   return false;
   });
 }
 
 onFileChosen(event: Event) {
-  console.log(event);
-}
+  const pickedFile = (event.target as HTMLInputElement).files[0];
+
+  if (!pickedFile) {
+    return;
+  }
+  const fr = new FileReader();
+  fr.onload = () => {
+    const dataUrl = fr.result.toString();
+    this.selectedImage = dataUrl;
+  }
+  fr.readAsDataURL(pickedFile);
+
+  }
 }
