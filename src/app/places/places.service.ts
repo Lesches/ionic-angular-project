@@ -52,6 +52,14 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
 
     }
 
+    uploadImage(image: File) {
+      const uploadData = new FormData();
+      uploadData.append('image', image);
+      this.http.post('');
+    }
+
+
+
     addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date, location: PlaceLocation
     ) {
       let generatedId: string;

@@ -42,7 +42,10 @@ Plugins.Camera.getPhoto({
 }).catch(error => {
 
   console.log(error);
-  return false;
+  if (this.usePicker) {
+    this.filePickerRef.nativeElement.click();
+    return false;
+  }
   });
 }
 
