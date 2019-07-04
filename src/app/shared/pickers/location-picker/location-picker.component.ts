@@ -61,21 +61,29 @@ private openMap() {
                 address: null,
                 staticMapImageUrl: null
             };
-            this.isLoading = true;
-            this.getAddress(modalData.data.lat, modalData.data.lng).pipe(switchMap(address => {
-                pickedLocation.address = address;
-                return of(this.getMapImage(pickedLocation.lat, pickedLocation.lng, 14));
-            })).subscribe(staticMapImageUrl => {
-                pickedLocation.staticMapImageUrl = staticMapImageUrl;
-                this.selectedLocationImage = staticMapImageUrl;
-                this.isLoading = false;
-                this.locationPick.emit(pickedLocation);
-            });
+
         });
         modalEl.present();
     });
 }
 
+private createPlace(lat: number, lng: number) {
+    const pickedLocation: PlaceLocation = {
+        lat, lng,
+        address: null,
+        staticMapImageUrl: null
+    };
+    this.isLoading = true;
+    this.getAddress(lat, lng).pipe(switchMap(address => {
+        pickedLocation.address = address;
+        return of(this.getMapImage(pickedLocation.lat, pickedLocation.lng, 14));
+    })).subscribe(staticMapImageUrl => {
+        pickedLocation.staticMapImageUrl = staticMapImageUrl;
+        this.selectedLocationImage = staticMapImageUrl;
+        this.isLoading = false;
+        this.locationPick.emit(pickedLocation);
+    });
+}
     private getAddress(lat: number, lng: number) {
   return this.http.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat}, ${lng}&key=${environment.YOUR_API_KEY}`)
       .pipe(map((geoData: any) => {
