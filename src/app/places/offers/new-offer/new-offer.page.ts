@@ -34,7 +34,7 @@ function base64toBlob(base64Data, contentType) {
 })
 export class NewOfferPage implements OnInit {
 
-  constructor(private placesService: PlacesService, private router: Router, private loadeingCtrl: LoadingController) { }
+  constructor(private placesService: PlacesService, private router: Router, private loadingCtrl: LoadingController) { }
     form: FormGroup;
   ngOnInit() {
     this.form = new FormGroup({
@@ -83,14 +83,14 @@ imageFile = imageData;
       return;
     }
     console.log(this.form.value);
-    this.loadeingCtrl.create({
+    this.loadingCtrl.create({
       message: 'Creating place...'
     }).then(loadingEl => {
       loadingEl.present();
       this.placesService.uploadImage(this.form.get('image').value).pipe(switchMap(uploadRes => {
     return  this.placesService.addPlace(this.form.value.title, this.form.value.description,
           +this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo),
-          this.form.value.location); })).subscribe(() => {
+          this.form.value.location, uploadRes.imageUrl); })).subscribe(() => {
           loadingEl.dismiss();
 
           this.form.reset();

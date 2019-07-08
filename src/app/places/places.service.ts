@@ -55,17 +55,15 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
     uploadImage(image: File) {
       const uploadData = new FormData();
       uploadData.append('image', image);
-      this.http.post('');
+      return this.http.post<{imageUrl: string, imagePath: string}>('', uploadData);
     }
 
-
-
-    addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date, location: PlaceLocation
+    addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date, location: PlaceLocation,
+             imageUrl: string
     ) {
       let generatedId: string;
-      const newPlace = new Place(Math.random().toString(), title, description,
-          'https://imgs.6sqft.com/wp-content/uploads/2014/06/21042534/Felix_Warburg_Mansion_007.jpg',
-          price, availableFrom, availableTo, this.authService.UserId, location);
+      const newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom,
+          availableTo, this.authService.UserId, location);
       return this.http.post<{name: string}>('https://maga-da45c.firebaseio.com/offered-places.json',
           {...newPlace, id: null}).pipe(switchMap(resData => {
               generatedId = resData.name;
