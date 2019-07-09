@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import {BehaviorSubject} from 'rxjs';
+import {User} from './user.model';
+import {map} from 'rxjs/operators';
 
 export interface AuthResponseData {
   kind: string;
@@ -16,15 +19,22 @@ export interface AuthResponseData {
   providedIn: 'root'
 })
 export class AuthService {
-private userIsAuthenticated = false;
-private userId = null;
+  private user = new BehaviorSubject<User>(null);
 
-get userAuthenticated() {
-  return this.userIsAuthenticated;
+get UserAuthenticated() {
+  return this.user.asObservable().pipe(map(user => {
+    if (user) {return !!user.Token; }  else {
+      return false;
+    }
+  }));
 }
 
 get UserId() {
-  return this.userId;
+  return this.user.asObservable().pipe(map(user => {
+    if (user) {
+      return user.id; } else {
+      return null;
+    }}));
 }
   constructor(private http: HttpClient) { }
 
@@ -40,7 +50,7 @@ return this.http.post<AuthResponseData>(
   }
 
   logout() {
-    this.userIsAuthenticated = false;
+    this.user.next(null);
   }
 
 
