@@ -55,7 +55,8 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
     uploadImage(image: File) {
       const uploadData = new FormData();
       uploadData.append('image', image);
-      return this.http.post<{imageUrl: string, imagePath: string}>('', uploadData);
+      return this.http.post<{imageUrl: string, imagePath: string}>(
+          'https://drive.google.com/open?id=0B-uCSILOnncibTQ0TWRvNWdHakk4WVdUYXNyYU0xNXFpTUlj', uploadData);
     }
 
     addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date, location: PlaceLocation,
