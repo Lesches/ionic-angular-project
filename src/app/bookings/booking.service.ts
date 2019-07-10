@@ -34,11 +34,17 @@ constructor(private authService: AuthService, private http: HttpClient) {
 
   addBooking(placeId: string, placeTitle: string, placeImage: string, fname: string, lname: string, guestNumber: number,
              dateFrom: Date, dateTo: Date) {
-    let generatedId: string;
-    const newBooking = new Booking(Math.random().toString(), placeId, this.authService.UserId,
+  let generatedId: string;
+  let newBooking: Booking;
+  this.authService.UserId.pipe(take(1), switchMap(userId => {
+    if (!userId) {
+      throw new Error('No user id found!');
+    }
+    newBooking = new Booking(Math.random().toString(), placeId, userId,
         placeTitle, placeImage, fname, lname, guestNumber, dateFrom, dateTo);
     return this.http.post<{name: string}>('https://maga-da45c.firebaseio.com/bookings.json',
-        {...newBooking, id: null}).pipe(switchMap(resData => {
+        {...newBooking, id: null}); }),
+      switchMap(resData => {
           generatedId = resData.name;
           return this.bookings;
     }),
