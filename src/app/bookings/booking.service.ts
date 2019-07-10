@@ -36,7 +36,7 @@ constructor(private authService: AuthService, private http: HttpClient) {
              dateFrom: Date, dateTo: Date) {
   let generatedId: string;
   let newBooking: Booking;
-  this.authService.UserId.pipe(take(1), switchMap(userId => {
+  return this.authService.UserId.pipe(take(1), switchMap(userId => {
     if (!userId) {
       throw new Error('No user id found!');
     }

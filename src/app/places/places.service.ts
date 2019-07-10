@@ -63,10 +63,16 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
              imageUrl: string
     ) {
       let generatedId: string;
-      const newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom,
-          availableTo, this.authService.UserId, location);
-      return this.http.post<{name: string}>('https://maga-da45c.firebaseio.com/offered-places.json',
-          {...newPlace, id: null}).pipe(switchMap(resData => {
+      let newPlace: Place;
+      return this.authService.UserId.pipe(take(1), switchMap(userId => {
+          if (!userId) {
+              throw new Error('No user found!');
+          }
+          newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom,
+              availableTo, userId, location);
+          return this.http.post<{name: string}>('https://maga-da45c.firebaseio.com/offered-places.json',
+              {...newPlace, id: null});
+      }), switchMap(resData => {
               generatedId = resData.name;
               return this.places;
         }), take(1), tap(places => {
