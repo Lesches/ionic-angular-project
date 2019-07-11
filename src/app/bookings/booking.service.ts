@@ -62,20 +62,26 @@ return this.bookings;
   }));
   }
 fetchBookings() {
-  return this.http.get<{[key: string]: BookingData}>(
-      `https://maga-da45c.firebaseio.com/bookings.json?ordereBy="UserId"&equalTo="${this.authService.UserId}"`)
-      .pipe(map(bookingData => {
-    const bookings = [];
-    for (const key in bookingData) {
-      if (bookingData.hasOwnProperty(key)) {
-        bookings.push(new Booking(key, bookingData[key].placeId, bookingData[key].userId, bookingData[key].placeTitle,
-            bookingData[key].placeImage, bookingData[key].fname, bookingData[key].lname, bookingData[key].guestNumber,
-            new Date(bookingData[key].bookedFrom), new Date(bookingData[key].bookedTo)));
-      }
+ return this.authService.UserId.pipe(switchMap(userId => {
+    if (!userId) {
+      throw new Error('User not found!');
     }
-    return bookings;
-  }), tap(bookings => {
-        this.bookings.next(bookings);
-      }));
+    return this.http.get<{[key: string]: BookingData}>(
+        `https://maga-da45c.firebaseio.com/bookings.json?ordereBy="UserId"&equalTo="${this.authService.UserId}"`)
+        .pipe(map(bookingData => {
+          const bookings = [];
+          for (const key in bookingData) {
+            if (bookingData.hasOwnProperty(key)) {
+              bookings.push(new Booking(key, bookingData[key].placeId, bookingData[key].userId, bookingData[key].placeTitle,
+                  bookingData[key].placeImage, bookingData[key].fname, bookingData[key].lname, bookingData[key].guestNumber,
+                  new Date(bookingData[key].bookedFrom), new Date(bookingData[key].bookedTo)));
+            }
+          }
+          return bookings;
+        }), tap(bookings => {
+          this.bookings.next(bookings);
+        }));
+      }
+  ));
 }
 }
