@@ -4,6 +4,7 @@ import {environment} from '../../environments/environment';
 import {BehaviorSubject} from 'rxjs';
 import {User} from './user.model';
 import {map, tap} from 'rxjs/operators';
+import {Plugins} from '@capacitor/core';
 
 export interface AuthResponseData {
   kind: string;
@@ -56,5 +57,9 @@ return this.http.post<AuthResponseData>(
 private setUserData(userData: AuthResponseData) {
   const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
   this.user.next(new User(userData.localId, userData.email, userData.idToken, expirationTime));
+}
+
+private storeAuthData(userId: string, token: string, tokenExpirationDate: string) {
+  Plugins.Storage.set();
 }
 }
