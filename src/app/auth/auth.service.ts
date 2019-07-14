@@ -74,6 +74,7 @@ return this.http.post<AuthResponseData>(
 
   logout() {
     this.user.next(null);
+    Pugins.storage.set({key: 'authData'});
   }
 
 private setUserData(userData: AuthResponseData) {

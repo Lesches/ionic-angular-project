@@ -8,7 +8,7 @@ import {Subscription} from 'rxjs';
 import {BookingService} from '../../../bookings/booking.service';
 import {AuthService} from '../../../auth/auth.service';
 import {MapModalComponent} from '../../../shared/map-modal/map-modal.component';
-import {switchMap} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-place-detail',
@@ -36,7 +36,7 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       }
       this.isLoading = true;
       let fetchedUserId: string;
-      this.authservice.UserId.pipe(switchMap(userId => {
+      this.authservice.UserId.pipe(take(1), switchMap(userId => {
         if (!userId) {
           throw new Error('Found no user');
         }

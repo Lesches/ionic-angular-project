@@ -62,7 +62,7 @@ return this.bookings;
   }));
   }
 fetchBookings() {
- return this.authService.UserId.pipe(switchMap(userId => {
+ return this.authService.UserId.pipe(take(1), switchMap(userId => {
     if (!userId) {
       throw new Error('User not found!');
     }
