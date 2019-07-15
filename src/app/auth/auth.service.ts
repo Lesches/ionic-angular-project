@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {BehaviorSubject, from} from 'rxjs';
@@ -19,8 +19,9 @@ export interface AuthResponseData {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy{
   private user = new BehaviorSubject<User>(null);
+  private activeLogoutTimer: any;
 
 get UserAuthenticated() {
   return this.user.asObservable().pipe(map(user => {
@@ -56,6 +57,7 @@ get UserId() {
       tap(user =>  {
 if (user) {
   this.user.next(user);
+  this.autoLogout(user.tokenDuration);
 }
     }), map(user => {
       return !!user;
@@ -68,18 +70,40 @@ return this.http.post<AuthResponseData>(
   }
 
   login(email: string, password: string) {
-    return this.http.post(`https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${environment.firebaseAPIKey}`,
+    return this.http.post<AuthResponseData>(`https://www.googleapis
+    .com/identitytoolkit/v3/relyingparty/verifyPassword?key=${environment.firebaseAPIKey}`,
         {email, password, returnSecureToken: true}).pipe(tap(this.setUserData).bind(this));
   }
 
   logout() {
+    if (this.activeLogoutTimer) {
+         clearTimeout(this.activeLogoutTimer);
+    }
     this.user.next(null);
-    Pugins.storage.set({key: 'authData'});
+    Plugins.storage.set({key: 'authData'});
+  }
+
+  ngOnDestroy(): void {
+    if (this.activeLogoutTimer) {
+      clearTimeout(this.activeLogoutTimer);
+    }
+  }
+
+  private autoLogout(duration: number) {
+    if (!this.activeLogoutTimer) {
+    } else {
+      clearTimeout(this.activeLogoutTimer);
+    }
+    this.activeLogoutTimer = setTimeout(() => {
+this.logout();
+  }, duration);
   }
 
 private setUserData(userData: AuthResponseData) {
-  const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
-  this.user.next(new User(userData.localId, userData.email, userData.idToken, expirationTime));
+  const expirationTime = new Date(new Date().getTime() + +userData.expiresIn * 1000);
+  const user = new User(userData.localId, userData.email, userData.idToken, expirationTime);
+  this.user.next(user);
+  this.autoLogout(user.tokenDuration);
   this.storeAuthData(userData.localId, userData.idToken, expirationTime.toISOString(), userData.email);
 }
 
