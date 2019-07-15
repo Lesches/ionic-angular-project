@@ -29,7 +29,11 @@ export class PlacesService {
   constructor(private authService: AuthService, private http: HttpClient) { }
 
   fetchPlaces() {
-    return  this.http.get<{[key: string]: PlaceData}>('https://maga-da45c.firebaseio.com/offered-places.json').pipe(map(resData => {
+    return  this.authService.Token.pipe(take(1), switchMap(token => {
+          return  this.http.get<{[key: string]: PlaceData}>(
+              `https://maga-da45c.firebaseio.com/offered-places.json?auth=${token}`);
+      }),
+      map(resData => {
     const places = [];
     for (const key in resData) {
         if (resData.hasOwnProperty(key)) {
@@ -45,32 +49,44 @@ export class PlacesService {
         }));
   }
     getPlace(id: string) {
-   return this.http.get<PlaceData>(`https://maga-da45c.firebaseio.com/offered-places${id}.json`).pipe(map(resData => {
-return new Place(id, resData.title, resData.description, resData.imageUrl, resData.price,
-    new Date(resData.availableFrom), new Date(resData.availableTo), resData.userId, resData.location);
-   }));
-
-    }
+    return  this.authService.Token.pipe(take(1), switchMap(token => {
+          return this.http.get<PlaceData>(
+              `https://maga-da45c.firebaseio.com/offered-places${id}.json?auth=${token}`);
+    }),
+        map(resData => {
+              return new Place(id, resData.title, resData.description, resData.imageUrl, resData.price,
+                  new Date(resData.availableFrom), new Date(resData.availableTo), resData.userId, resData.location);
+          }));
+  }
 
     uploadImage(image: File) {
       const uploadData = new FormData();
       uploadData.append('image', image);
-      return this.http.post<{imageUrl: string, imagePath: string}>(
-          'https://drive.google.com/open?id=0B-uCSILOnncibTQ0TWRvNWdHakk4WVdUYXNyYU0xNXFpTUlj', uploadData);
+
+      return this.authService.Token.pipe(take(1), switchMap(token => {
+          return this.http.post<{imageUrl: string, imagePath: string}>(
+              'https://drive.google.com/open?id=0B-uCSILOnncibTQ0TWRvNWdHakk4WVdUYXNyYU0xNXFpTUlj',
+              uploadData, {headers: {Authorization: 'Bearer ' + token}});
+      }));
     }
 
     addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date, location: PlaceLocation,
              imageUrl: string
     ) {
       let generatedId: string;
+      let fetchedUserId: string;
       let newPlace: Place;
-      return this.authService.UserId.pipe(take(1), switchMap(userId => {
-          if (!userId) {
+      return this.authService.UserId.pipe(take(1),
+          switchMap(userId => {
+fetchedUserId = userId;
+return this.authService.Token;
+          }), take(1), switchMap(token => {
+          if (!fetchedUserId) {
               throw new Error('No user found!');
           }
           newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom,
-              availableTo, userId, location);
-          return this.http.post<{name: string}>('https://maga-da45c.firebaseio.com/offered-places.json',
+              availableTo, fetchedUserId, location);
+          return this.http.post<{name: string}>(`https://maga-da45c.firebaseio.com/offered-places.json?auth=${token}`,
               {...newPlace, id: null});
       }), switchMap(resData => {
               generatedId = resData.name;
@@ -86,8 +102,11 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
     }
     updateOffer(placeId: string, title: string, description: string) {
       let updatedPlaces: Place[];
-
-      return  this.places.pipe(take(1), switchMap(places => {
+      let fetchedToken: string;
+      return this.authService.Token.pipe(take(1), switchMap(token => {
+          fetchedToken = token;
+          return this.places;
+}), take(1), switchMap(places => {
           if (!places || places.length <= 0) {
               return this.fetchPlaces();
           } else {
@@ -103,7 +122,7 @@ return new Place(id, resData.title, resData.description, resData.imageUrl, resDa
               updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description,
                   old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId, old.location);
 
-              return this.http.put(`https://maga-da45c.firebaseio.com/offered-places${placeId}.json`,
+              return this.http.put(`https://maga-da45c.firebaseio.com/offered-places${placeId}.json?auth=${fetchedToken}`,
                   {...updatedPlaces[updatedPlaceIndex], id: null}
               );
           }), tap(() => {

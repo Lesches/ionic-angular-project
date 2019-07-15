@@ -38,6 +38,14 @@ get UserId() {
       return null;
     }}));
 }
+
+get Token() {
+  return this.user.asObservable().pipe(map(user => {
+    if (user) {
+      return user.Token; } else {
+      return null;
+    }}));
+}
   constructor(private http: HttpClient) { }
 
   autoLogin() {
